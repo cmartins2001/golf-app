@@ -112,9 +112,9 @@ class GolfVisualizer:
         fig.add_hline(y=0, line_dash="dot", line_color=COLORS['neutral'], opacity=0.5)
         fig.add_vline(x=0, line_dash="dot", line_color=COLORS['neutral'], opacity=0.5)
         
-        fig.update_layout(**BASE_LAYOUT, height=500)
-        fig.update_xaxis(zeroline=True, zerolinewidth=1, zerolinecolor=COLORS['neutral'])
-        fig.update_yaxis(zeroline=False)
+        fig.update_layout(**BASE_LAYOUT) # , height=500
+        fig.update_xaxes(zeroline=True, zerolinewidth=1, zerolinecolor=COLORS['neutral'])
+        fig.update_yaxes(zeroline=False)
         
         return fig
     
@@ -266,7 +266,6 @@ class GolfVisualizer:
             ),
             showlegend=True,
             title="Performance Comparison",
-            height=450
         )
         
         return fig

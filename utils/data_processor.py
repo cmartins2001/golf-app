@@ -153,7 +153,7 @@ class GolfDataProcessor:
     
     def get_latest_session_id(self) -> str:
         """Get the most recent session ID"""
-        return self.df.select(pl.col("session_id")).unique().sort().tail(1).item()
+        return self.df.select(pl.col("session_id")).unique().sort("session_id").tail(1).item()
     
     def get_shot_distribution(self, session_id: Optional[str] = None) -> pl.DataFrame:
         """Get shot pattern distribution for scatter plots"""
