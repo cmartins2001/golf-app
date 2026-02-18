@@ -112,9 +112,9 @@ class GolfVisualizer:
         fig.add_hline(y=0, line_dash="dot", line_color=COLORS['neutral'], opacity=0.5)
         fig.add_vline(x=0, line_dash="dot", line_color=COLORS['neutral'], opacity=0.5)
         
-        fig.update_layout(**BASE_LAYOUT) # , height=500
-        fig.update_xaxes(zeroline=True, zerolinewidth=1, zerolinecolor=COLORS['neutral'])
-        fig.update_yaxes(zeroline=False)
+        fig.update_layout(**BASE_LAYOUT, height=500)
+        fig.update_xaxis(zeroline=True, zerolinewidth=1, zerolinecolor=COLORS['neutral'])
+        fig.update_yaxis(zeroline=False)
         
         return fig
     
@@ -266,6 +266,7 @@ class GolfVisualizer:
             ),
             showlegend=True,
             title="Performance Comparison",
+            height=450
         )
         
         return fig
@@ -447,3 +448,83 @@ class GolfVisualizer:
         )
         
         return fig
+    
+    def plot_club_comparison(self, club_comparison: pl.DataFrame) -> go.Figure:
+        """
+        Create comparison chart showing performance across different clubs
+        
+        Args:
+            club_comparison: DataFrame with club-level aggregated metrics
+            
+        Returns:
+            Plotly figure with club comparison
+        """
+        df = club_comparison.to_pandas()
+        
+        if len(df) == 0:
+            # Return empty figure with message
+            fig = go.Figure()
+            fig.add_annotation(
+                text="No club data available. Assign clubs to sessions to see comparison.",
+                xref="paper", yref="paper",
+                x=0.5, y=0.5, showarrow=False,
+                font=dict(size=14, color=COLORS['neutral'])
+            )
+            fig.update_layout(**BASE_LAYOUT, height=400)
+            return fig
+        
+        # Create subplots: Distance and Consistency
+        fig = make_subplots(
+            rows=1, cols=2,
+            subplot_titles=('Distance by Club', 'Consistency by Club'),
+            specs=[[{"secondary_y": False}, {"secondary_y": False}]]
+        )
+        
+        # Distance chart
+        fig.add_trace(
+            go.Bar(
+                x=df['club'],
+                y=df['median_carry'],
+                name='Median Carry',
+                marker_color=COLORS['primary'],
+                text=df['median_carry'].round(1),
+                textposition='outside',
+                hovertemplate='<b>%{x}</b><br>Carry: %{y:.1f} yds<br>Sessions: %{customdata}<extra></extra>',
+                customdata=df['num_sessions']
+            ),
+            row=1, col=1
+        )
+        
+        # Consistency chart (lower is better, so invert for visual)
+        fig.add_trace(
+            go.Bar(
+                x=df['club'],
+                y=df['carry_std'],
+                name='Distance Std Dev',
+                marker_color=COLORS['secondary'],
+                text=df['carry_std'].round(1),
+                textposition='outside',
+                hovertemplate='<b>%{x}</b><br>Std Dev: %{y:.1f} yds<br>Total Shots: %{customdata}<extra></extra>',
+                customdata=df['total_shots']
+            ),
+            row=1, col=2
+        )
+        
+        # Update axes
+        fig.update_xaxes(title_text="Club", row=1, col=1)
+        fig.update_xaxes(title_text="Club", row=1, col=2)
+        fig.update_yaxes(title_text="Carry Distance (yards)", row=1, col=1)
+        fig.update_yaxes(title_text="Std Deviation (yards)", row=1, col=2)
+        
+        fig.update_layout(
+            height=450,
+            title_text="Club Performance Comparison",
+            showlegend=False,
+            font=dict(family="Inter, sans-serif"),
+            plot_bgcolor='white',
+            paper_bgcolor='white',
+            margin=dict(l=60, r=40, t=80, b=60),
+        )
+        
+        return fig
+

@@ -5,10 +5,12 @@ A clean, interactive dashboard for tracking Uneekor launch monitor data over tim
 ## Features
 
 - **📊 Multi-session tracking**: Automatically combines data from multiple range sessions
+- **🏌️ Club tracking**: Assign clubs to sessions for club-specific analysis and comparison
 - **🎯 Goal setting**: Set personal targets and track progress against them
 - **📈 Trend analysis**: Rolling averages show improvement over time
 - **🎪 Shot patterns**: Visualize dispersion and identify consistency issues
 - **⚡ Fast processing**: Polars-based pipeline handles large datasets efficiently
+- **🔍 Flexible filtering**: Filter all visualizations by club for targeted practice insights
 
 ## Quick Start
 
@@ -25,17 +27,34 @@ pip install marimo polars plotly
 
 ### 2. Add Your Data
 
-Export your range session from Refine software and save as CSV in the `data/` directory:
+Export your range session from Refine software and add it with club information:
 
+**Easy method (with prompts):**
+```bash
+python add_session.py ~/Downloads/my_session.csv
+# Follow prompts to select club and add notes
+```
+
+**Quick method (all at once):**
+```bash
+python add_session.py ~/Downloads/my_session.csv \
+  --date 2025-01-20 \
+  --club "7 Iron" \
+  --notes "Working on consistency"
+```
+
+Files are automatically saved as:
 ```
 golf_dashboard/
 ├── data/
 │   ├── session_2025_01_13.csv
-│   ├── session_2025_01_20.csv  ← Your new sessions
-│   └── session_2025_01_27.csv
+│   ├── session_2025_01_20.csv  ← Your new session
+│   └── club_metadata.json       ← Club assignments (auto-created)
 ```
 
 **File naming convention:** `session_YYYY_MM_DD.csv`
+
+See [CLUB_TRACKING.md](CLUB_TRACKING.md) for complete club management guide.
 
 ### 3. Launch Dashboard
 
@@ -47,6 +66,12 @@ marimo edit dashboard.py
 Your browser will open automatically with the interactive dashboard.
 
 ## Dashboard Sections
+
+### 🏌️ Club Filter
+Dropdown selector to filter all visualizations by specific club:
+- View "All Clubs" for comprehensive analysis
+- Select individual club (e.g., "7 Iron") for focused tracking
+- All charts update automatically when filter changes
 
 ### 🎯 Goal Configuration
 Set personal targets for:
@@ -77,6 +102,13 @@ Interactive scatter plot showing:
 - Current session highlighted
 - Goal zones overlaid
 - Shot type color coding
+
+### 📊 Club Comparison
+Performance table across all clubs:
+- Median carry distance per club
+- Consistency metrics by club
+- Strike quality rates
+- Total sessions and shots per club
 
 ## Key Metrics Explained
 
