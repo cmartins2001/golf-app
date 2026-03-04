@@ -54,7 +54,7 @@ class GolfDataProcessor:
             ])
             dfs.append(df)
         
-        self.df = pl.concat(dfs)
+        self.df = pl.concat(dfs) #### this is a bug currently -- need to diagnose
         return self._clean_and_enrich()
     
     def _clean_and_enrich(self) -> pl.DataFrame:
